@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Kotlin Multiplatform local metadata cache
+.kotlin/
+
+# Generated IDE artifacts
+/.idea/artifacts/
+
+# Xcode
+DerivedData/
+*.xcuserstate
+xcuserdata/
