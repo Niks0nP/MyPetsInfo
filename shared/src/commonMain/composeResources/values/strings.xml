@@ -7,6 +7,9 @@
     <string name="new_case">New task</string>
     <string name="change_case">Edit task</string>
 
+    <string name="back">Back</string>
+    <string name="add_case">Добавить дело</string>
+
     <!-- Months -->
     <string name="month_january">January</string>
     <string name="month_february">February</string>

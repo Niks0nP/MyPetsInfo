@@ -7,6 +7,9 @@
     <string name="new_case">Новое дело</string>
     <string name="change_case">Изменить дело</string>
 
+    <string name="back">Назад</string>
+    <string name="add_case">Добавить дело</string>
+
     <!-- Месяцы в форме, используемой в полной дате -->
     <string name="month_january">января</string>
     <string name="month_february">февраля</string>
