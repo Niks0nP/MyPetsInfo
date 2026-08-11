@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -20,9 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.niks0n.mypetsinfo.data.CareTaskEntity
+import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
 
@@ -31,8 +35,23 @@ internal fun ScheduleScreen(
     state: AppState,
     onEditTask: (CareTaskEntity) -> Unit,
 ) {
-    val dates = remember(state.today) {
-        (0..6).map { offset -> state.today.plus(offset, DateTimeUnit.DAY) }
+    ScheduleScreenContent(
+        today = state.today,
+        tasksForDate = state::tasksFor,
+        isCompleted = state::isCompleted,
+        onEditTask = onEditTask,
+    )
+}
+
+@Composable
+private fun ScheduleScreenContent(
+    today: LocalDate,
+    tasksForDate: (LocalDate) -> List<CareTaskEntity>,
+    isCompleted: (taskId: Long, date: LocalDate) -> Boolean,
+    onEditTask: (CareTaskEntity) -> Unit,
+) {
+    val dates = remember(today) {
+        (0..6).map { offset -> today.plus(offset, DateTimeUnit.DAY) }
     }
 
     LazyColumn(
@@ -41,10 +60,10 @@ internal fun ScheduleScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
         items(dates, key = { it.toString() }) { date ->
-            val tasks = state.tasksFor(date)
+            val tasks = tasksForDate(date)
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = if (date == state.today) {
+                    text = if (date == today) {
                         "Сегодня, ${date.day} ${stringResource(monthNameResources[date.month.ordinal])}"
                     } else {
                         formatFullDate(date)
@@ -62,12 +81,61 @@ internal fun ScheduleScreen(
                     tasks.forEach { task ->
                         CompactScheduleTask(
                             task = task,
-                            completed = state.isCompleted(task.id, date),
+                            completed = isCompleted(task.id, date),
                             onClick = { onEditTask(task) },
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview(
+    name = "Расписание",
+    widthDp = 390,
+    heightDp = 844,
+    showBackground = true,
+    locale = "ru",
+)
+@Composable
+private fun ScheduleScreenPreview() {
+    val tasks = listOf(
+        CareTaskEntity(
+            id = 1,
+            title = "Покормить",
+            hour = 9,
+            minute = 0,
+        ),
+        CareTaskEntity(
+            id = 2,
+            title = "Расчесать шерсть",
+            hour = 18,
+            minute = 30,
+            daysMask = 0b0101010,
+        ),
+        CareTaskEntity(
+            id = 3,
+            title = "Почистить лоток",
+            hour = 20,
+            minute = 0,
+            daysMask = 0b1100000,
+        ),
+    )
+    val today = LocalDate(2026, 8, 8)
+
+    MyPetsInfoTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ScheduleScreenContent(
+                today = today,
+                tasksForDate = { date ->
+                    tasks.filter { task ->
+                        task.daysMask and (1 shl date.dayOfWeek.ordinal) != 0
+                    }
+                },
+                isCompleted = { taskId, date -> taskId == 1L && date == today },
+                onEditTask = {},
+            )
         }
     }
 }

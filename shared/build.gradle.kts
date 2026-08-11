@@ -41,6 +41,7 @@ kotlin {
         implementation(libs.compose.foundation)
         implementation(libs.compose.material3)
         implementation(libs.compose.ui)
+        implementation(libs.compose.ui.tooling.preview)
         implementation(libs.compose.components.resources)
         implementation(libs.kotlinx.coroutines.core)
         implementation(libs.kotlinx.datetime)
@@ -51,6 +52,7 @@ kotlin {
 }
 
 dependencies {
+    add("androidRuntimeClasspath", libs.compose.ui.tooling)
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)

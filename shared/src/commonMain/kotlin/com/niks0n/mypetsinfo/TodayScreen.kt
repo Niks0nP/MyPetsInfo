@@ -19,15 +19,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.niks0n.mypetsinfo.data.CareTaskEntity
+import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
+import kotlinx.datetime.LocalDate
 
 @Composable
 internal fun TodayScreen(
@@ -37,7 +41,33 @@ internal fun TodayScreen(
 ) {
     val today = state.today
     val tasks = state.tasksFor(today)
-    val completedCount = tasks.count { state.isCompleted(it.id, today) }
+    TodayScreenContent(
+        today = today,
+        tasks = tasks,
+        completedTaskIds = tasks
+            .filter { task -> state.isCompleted(task.id, today) }
+            .map { task -> task.id }
+            .toSet(),
+        isLoading = state.isLoading,
+        onCompletedChange = { task, completed ->
+            state.setCompleted(task.id, today, completed)
+        },
+        onAddTask = onAddTask,
+        onEditTask = onEditTask,
+    )
+}
+
+@Composable
+private fun TodayScreenContent(
+    today: LocalDate,
+    tasks: List<CareTaskEntity>,
+    completedTaskIds: Set<Long>,
+    isLoading: Boolean,
+    onCompletedChange: (task: CareTaskEntity, completed: Boolean) -> Unit,
+    onAddTask: () -> Unit,
+    onEditTask: (CareTaskEntity) -> Unit,
+) {
+    val completedCount = tasks.count { it.id in completedTaskIds }
 
     LazyColumn(
         contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 96.dp),
@@ -59,15 +89,62 @@ internal fun TodayScreen(
             items(tasks, key = { it.id }) { task ->
                 TaskCard(
                     task = task,
-                    completed = state.isCompleted(task.id, today),
-                    onCompletedChange = { state.setCompleted(task.id, today, it) },
+                    completed = task.id in completedTaskIds,
+                    onCompletedChange = { onCompletedChange(task, it) },
                     onEdit = { onEditTask(task) },
                 )
             }
-        } else if (!state.isLoading) {
+        } else if (!isLoading) {
             item {
                 EmptyTodayCard(onAddTask)
             }
+        }
+    }
+}
+
+@Preview(
+    name = "Сегодня — дела",
+    widthDp = 390,
+    heightDp = 844,
+    showBackground = true,
+    locale = "ru",
+)
+@Composable
+private fun TodayScreenPreview() {
+    val tasks = listOf(
+        CareTaskEntity(
+            id = 1,
+            title = "Покормить",
+            description = "Влажный корм, половина пачки",
+            hour = 9,
+            minute = 0,
+        ),
+        CareTaskEntity(
+            id = 2,
+            title = "Поменять воду",
+            hour = 12,
+            minute = 30,
+        ),
+        CareTaskEntity(
+            id = 3,
+            title = "Поиграть",
+            description = "Не меньше 15 минут",
+            hour = 19,
+            minute = 0,
+        ),
+    )
+
+    MyPetsInfoTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            TodayScreenContent(
+                today = LocalDate(2026, 8, 8),
+                tasks = tasks,
+                completedTaskIds = setOf(1),
+                isLoading = false,
+                onCompletedChange = { _, _ -> },
+                onAddTask = {},
+                onEditTask = {},
+            )
         }
     }
 }

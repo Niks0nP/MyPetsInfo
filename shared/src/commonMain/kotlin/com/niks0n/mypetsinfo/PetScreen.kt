@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,11 +30,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import com.niks0n.mypetsinfo.data.PetEntity
+import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 
 @Composable
 internal fun PetScreen(state: AppState) {
-    var name by remember(state.pet) { mutableStateOf(state.pet.name) }
-    var species by remember(state.pet) { mutableStateOf(state.pet.species) }
+    PetScreenContent(
+        pet = state.pet,
+        isSaving = state.isSaving,
+        onSave = state::savePet,
+    )
+}
+
+@Composable
+private fun PetScreenContent(
+    pet: PetEntity,
+    isSaving: Boolean,
+    onSave: (name: String, species: String) -> Unit,
+) {
+    var name by remember(pet) { mutableStateOf(pet.name) }
+    var species by remember(pet) { mutableStateOf(pet.species) }
 
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
@@ -94,12 +111,32 @@ internal fun PetScreen(state: AppState) {
         }
         item {
             Button(
-                enabled = name.isNotBlank() && !state.isSaving,
-                onClick = { state.savePet(name.trim(), species.trim()) },
+                enabled = name.isNotBlank() && !isSaving,
+                onClick = { onSave(name.trim(), species.trim()) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Сохранить профиль")
             }
+        }
+    }
+}
+
+@Preview(
+    name = "Питомец",
+    widthDp = 390,
+    heightDp = 844,
+    showBackground = true,
+    locale = "ru",
+)
+@Composable
+private fun PetScreenPreview() {
+    MyPetsInfoTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            PetScreenContent(
+                pet = PetEntity(name = "Барсик", species = "Кот"),
+                isSaving = false,
+                onSave = { _, _ -> },
+            )
         }
     }
 }
