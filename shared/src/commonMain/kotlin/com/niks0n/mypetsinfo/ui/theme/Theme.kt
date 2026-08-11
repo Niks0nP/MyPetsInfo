@@ -90,6 +90,7 @@ fun MyPetsInfoTheme(
     MaterialTheme(
         colorScheme = if (darkTheme) darkScheme else lightScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content,
     )
 }
