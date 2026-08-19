@@ -2,7 +2,7 @@ package com.niks0n.mypetsinfo.ui.theme
 
 import androidx.compose.ui.unit.dp
 
-internal class AppSpacing {
+internal object AppSpacing {
     val none = 0.dp
 
     // Default paddings with 4.dp step

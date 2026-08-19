@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.niks0n.mypetsinfo.data.PetEntity
+import com.niks0n.mypetsinfo.ui.theme.AppSpacing
 import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 
 @Composable
@@ -53,8 +54,8 @@ private fun PetScreenContent(
     var species by remember(pet) { mutableStateOf(pet.species) }
 
     LazyColumn(
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(AppSpacing.md),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
         modifier = Modifier.fillMaxSize(),
     ) {
         item {
