@@ -3,12 +3,25 @@
     <!-- Заголовки экранов -->
     <string name="today">Сегодня</string>
     <string name="schedule">Расписание</string>
+    <string name="news">Новости</string>
     <string name="pet">Питомец</string>
     <string name="new_case">Новое дело</string>
     <string name="change_case">Изменить дело</string>
 
     <string name="back">Назад</string>
     <string name="add_case">Добавить дело</string>
+
+    <!-- Новости -->
+    <string name="news_intro_title">Узнавайте новое</string>
+    <string name="news_intro_body">Подборка интересных фактов о животных. Позже свежие материалы будут загружаться из внешнего API.</string>
+    <string name="news_fact_cat_title">Кошки и сладкий вкус</string>
+    <string name="news_fact_cat_body">Кошки не воспринимают сладкий вкус, потому что соответствующий вкусовой рецептор у них не работает.</string>
+    <string name="news_fact_dog_title">Рисунок носа собаки</string>
+    <string name="news_fact_dog_body">Узор из бороздок и складок на носу каждой собаки индивидуален — почти как отпечаток пальца.</string>
+    <string name="news_fact_octopus_title">Три сердца</string>
+    <string name="news_fact_octopus_body">У осьминога три сердца: два перекачивают кровь через жабры, а одно снабжает остальное тело.</string>
+    <string name="news_fact_elephant_title">Общение через вибрации</string>
+    <string name="news_fact_elephant_body">Слоны способны улавливать низкочастотные сигналы и вибрации земли на больших расстояниях.</string>
 
     <!-- Месяцы в форме, используемой в полной дате -->
     <string name="month_january">января</string>

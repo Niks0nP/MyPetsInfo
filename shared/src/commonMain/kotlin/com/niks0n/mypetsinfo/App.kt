@@ -33,6 +33,11 @@ import com.niks0n.mypetsinfo.data.AppDatabase
 import com.niks0n.mypetsinfo.data.CareTaskEntity
 import com.niks0n.mypetsinfo.data.PetRepository
 import com.niks0n.mypetsinfo.data.buildDatabase
+import com.niks0n.mypetsinfo.screens.NewsScreen
+import com.niks0n.mypetsinfo.screens.PetScreen
+import com.niks0n.mypetsinfo.screens.ScheduleScreen
+import com.niks0n.mypetsinfo.screens.TaskEditorScreen
+import com.niks0n.mypetsinfo.screens.TodayScreen
 import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 import mypetsinfo.shared.generated.resources.Res
 import mypetsinfo.shared.generated.resources.add_case
@@ -41,6 +46,8 @@ import mypetsinfo.shared.generated.resources.calendar_icon
 import mypetsinfo.shared.generated.resources.change_case
 import mypetsinfo.shared.generated.resources.house_icon
 import mypetsinfo.shared.generated.resources.new_case
+import mypetsinfo.shared.generated.resources.news
+import mypetsinfo.shared.generated.resources.news_icon
 import mypetsinfo.shared.generated.resources.pet
 import mypetsinfo.shared.generated.resources.pet_icon
 import mypetsinfo.shared.generated.resources.plus_icon
@@ -52,6 +59,7 @@ import org.jetbrains.compose.resources.stringResource
 private enum class Screen {
     Today,
     Schedule,
+    News,
     Pet,
     Editor,
 }
@@ -87,6 +95,7 @@ fun App(
                             text = when (screen) {
                                 Screen.Today -> stringResource(Res.string.today)
                                 Screen.Schedule -> stringResource(Res.string.schedule)
+                                Screen.News -> stringResource(Res.string.news)
                                 Screen.Pet -> stringResource(Res.string.pet)
                                 Screen.Editor -> stringResource(
                                     if (editedTask == null) Res.string.new_case else Res.string.change_case,
@@ -155,6 +164,8 @@ fun App(
                             screen = Screen.Editor
                         },
                     )
+
+                    Screen.News -> NewsScreen()
 
                     Screen.Pet -> PetScreen(state)
 
@@ -239,6 +250,17 @@ private fun AppNavigationBar(
                 )
             },
             label = { Text(stringResource(Res.string.schedule)) },
+        )
+        NavigationBarItem(
+            selected = selected == Screen.News,
+            onClick = { onSelect(Screen.News) },
+            icon = {
+                Icon(
+                    painter = painterResource(Res.drawable.news_icon),
+                    contentDescription = stringResource(Res.string.news),
+                )
+            },
+            label = { Text(stringResource(Res.string.news)) },
         )
         NavigationBarItem(
             selected = selected == Screen.Pet,

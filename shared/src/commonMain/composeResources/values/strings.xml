@@ -3,12 +3,25 @@
     <!-- Screen titles -->
     <string name="today">Today</string>
     <string name="schedule">Schedule</string>
+    <string name="news">News</string>
     <string name="pet">Pet</string>
     <string name="new_case">New task</string>
     <string name="change_case">Edit task</string>
 
     <string name="back">Back</string>
     <string name="add_case">Добавить дело</string>
+
+    <!-- News -->
+    <string name="news_intro_title">Discover something new</string>
+    <string name="news_intro_body">A selection of interesting animal facts. Later, fresh stories will come from an external API.</string>
+    <string name="news_fact_cat_title">Cats and sweetness</string>
+    <string name="news_fact_cat_body">Cats do not perceive sweet taste because their sweet taste receptor is not functional.</string>
+    <string name="news_fact_dog_title">A dog's nose pattern</string>
+    <string name="news_fact_dog_body">The pattern of ridges and creases on each dog's nose is individual, much like a fingerprint.</string>
+    <string name="news_fact_octopus_title">Three hearts</string>
+    <string name="news_fact_octopus_body">An octopus has three hearts: two move blood through the gills, and one supplies the rest of the body.</string>
+    <string name="news_fact_elephant_title">Communication through vibrations</string>
+    <string name="news_fact_elephant_body">Elephants can detect low-frequency calls and vibrations through the ground over long distances.</string>
 
     <!-- Months -->
     <string name="month_january">January</string>

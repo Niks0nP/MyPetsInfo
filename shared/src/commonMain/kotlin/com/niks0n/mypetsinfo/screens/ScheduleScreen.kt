@@ -1,4 +1,4 @@
-package com.niks0n.mypetsinfo
+package com.niks0n.mypetsinfo.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.niks0n.mypetsinfo.AppState
 import com.niks0n.mypetsinfo.data.CareTaskEntity
+import com.niks0n.mypetsinfo.formatFullDate
+import com.niks0n.mypetsinfo.formatTime
+import com.niks0n.mypetsinfo.monthNameResources
 import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate

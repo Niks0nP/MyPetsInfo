@@ -1,4 +1,4 @@
-package com.niks0n.mypetsinfo
+package com.niks0n.mypetsinfo.screens
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.niks0n.mypetsinfo.data.ALL_DAYS_MASK
 import com.niks0n.mypetsinfo.data.CareTaskEntity
+import com.niks0n.mypetsinfo.formatTime
 import mypetsinfo.shared.generated.resources.Res
 import mypetsinfo.shared.generated.resources.day_friday_short
 import mypetsinfo.shared.generated.resources.day_monday_short
