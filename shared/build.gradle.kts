@@ -25,6 +25,12 @@ kotlin {
         }
     }
 
+    jvm {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64(),
@@ -48,6 +54,7 @@ kotlin {
         api(libs.androidx.room.runtime)
         implementation(libs.androidx.sqlite.bundled)
         testImplementation(kotlin("test"))
+        testImplementation(libs.kotlinx.coroutines.test)
     }
 }
 
@@ -56,6 +63,7 @@ dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
 }
 
 room {
