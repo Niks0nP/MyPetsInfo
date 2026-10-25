@@ -8,9 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.remember
-import com.niks0n.mypetsinfo.data.getDatabaseBuilder
-import com.niks0n.mypetsinfo.notifications.AndroidReminderScheduler
 
 class MainActivity : ComponentActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -21,11 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val reminderScheduler = remember { AndroidReminderScheduler(applicationContext) }
-            val databaseBuilder = remember { getDatabaseBuilder(applicationContext) }
             App(
-                databaseBuilder = databaseBuilder,
-                reminderScheduler = reminderScheduler,
                 requestNotificationPermission = ::requestNotificationPermission,
             )
         }

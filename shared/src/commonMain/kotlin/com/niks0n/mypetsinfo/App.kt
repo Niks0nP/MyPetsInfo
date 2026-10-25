@@ -28,11 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.room.RoomDatabase
-import com.niks0n.mypetsinfo.data.AppDatabase
+import org.koin.compose.koinInject
 import com.niks0n.mypetsinfo.data.CareTaskEntity
 import com.niks0n.mypetsinfo.data.PetRepository
-import com.niks0n.mypetsinfo.data.buildDatabase
 import com.niks0n.mypetsinfo.screens.NewsScreen
 import com.niks0n.mypetsinfo.screens.PetScreen
 import com.niks0n.mypetsinfo.screens.ScheduleScreen
@@ -67,12 +65,10 @@ private enum class Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
-    databaseBuilder: RoomDatabase.Builder<AppDatabase>,
+    repository: PetRepository = koinInject(),
     reminderScheduler: ReminderScheduler = NoOpReminderScheduler,
     requestNotificationPermission: () -> Unit = {},
 ) {
-    val database = remember(databaseBuilder) { buildDatabase(databaseBuilder) }
-    val repository = remember(database) { PetRepository(database.careDao()) }
     val scope = rememberCoroutineScope()
     val state = remember(repository, reminderScheduler) {
         AppState(repository, reminderScheduler, scope)
