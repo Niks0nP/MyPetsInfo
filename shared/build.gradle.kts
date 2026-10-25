@@ -51,6 +51,8 @@ kotlin {
         implementation(libs.compose.components.resources)
         implementation(libs.kotlinx.coroutines.core)
         implementation(libs.kotlinx.datetime)
+        implementation(libs.koin.core)
+        implementation(libs.koin.compose)
         api(libs.androidx.room.runtime)
         implementation(libs.androidx.sqlite.bundled)
         testImplementation(kotlin("test"))
