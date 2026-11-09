@@ -50,5 +50,41 @@ class PetRepository(private val dao: CareDao) {
     suspend fun getLatestWeight(petId: Long): WeightMeasurementEntity? =
         dao.getLatestWeight(petId)
 
+    suspend fun getWeightHistory(petId: Long): List<WeightMeasurementEntity> =
+        dao.getWeightHistory(petId)
+
+    suspend fun saveWeight(
+        petId: Long,
+        measurement: WeightMeasurementEntity,
+    ): WeightMeasurementEntity {
+        require(measurement.petId == petId) { "Weight owner does not match the active pet" }
+        require(measurement.weightGrams > 0) { "Weight must be positive" }
+
+        if (measurement.id != 0L) {
+            require(dao.getWeight(petId, measurement.id) != null) {
+                "Weight measurement does not belong to the active pet"
+            }
+            dao.updateWeight(measurement)
+            return measurement
+        }
+
+        val sameDayMeasurement = dao.getWeightForDate(petId, measurement.measuredOn)
+        if (sameDayMeasurement != null) {
+            return sameDayMeasurement.copy(
+                weightGrams = measurement.weightGrams,
+                note = measurement.note,
+            ).also { dao.updateWeight(it) }
+        }
+
+        return measurement.copy(id = dao.insertWeight(measurement))
+    }
+
+    suspend fun deleteWeight(petId: Long, measurementId: Long) {
+        require(dao.getWeight(petId, measurementId) != null) {
+            "Weight measurement does not belong to the active pet"
+        }
+        dao.deleteWeight(petId, measurementId)
+    }
+
     suspend fun getHealthRecordCount(petId: Long): Int = dao.getHealthRecordCount(petId)
 }

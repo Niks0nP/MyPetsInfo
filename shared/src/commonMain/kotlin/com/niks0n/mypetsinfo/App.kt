@@ -31,12 +31,15 @@ import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
 import com.niks0n.mypetsinfo.data.CareTaskEntity
 import com.niks0n.mypetsinfo.data.PetRepository
+import com.niks0n.mypetsinfo.data.WeightMeasurementEntity
 import com.niks0n.mypetsinfo.screens.NewsScreen
 import com.niks0n.mypetsinfo.screens.PetEditorScreen
 import com.niks0n.mypetsinfo.screens.PetScreen
 import com.niks0n.mypetsinfo.screens.ScheduleScreen
 import com.niks0n.mypetsinfo.screens.TaskEditorScreen
 import com.niks0n.mypetsinfo.screens.TodayScreen
+import com.niks0n.mypetsinfo.screens.WeightEditorScreen
+import com.niks0n.mypetsinfo.screens.WeightHistoryScreen
 import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 import mypetsinfo.shared.generated.resources.Res
 import mypetsinfo.shared.generated.resources.add_case
@@ -54,6 +57,9 @@ import mypetsinfo.shared.generated.resources.pet_icon
 import mypetsinfo.shared.generated.resources.plus_icon
 import mypetsinfo.shared.generated.resources.schedule
 import mypetsinfo.shared.generated.resources.today
+import mypetsinfo.shared.generated.resources.weight_add_title
+import mypetsinfo.shared.generated.resources.weight_edit_title
+import mypetsinfo.shared.generated.resources.weight_history_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -63,6 +69,8 @@ private enum class Screen {
     News,
     Pet,
     PetEditor,
+    WeightHistory,
+    WeightEditor,
     Editor,
 }
 
@@ -80,6 +88,7 @@ fun App(
 
     var screen by remember { mutableStateOf(Screen.Today) }
     var editedTask by remember { mutableStateOf<CareTaskEntity?>(null) }
+    var editedWeight by remember { mutableStateOf<WeightMeasurementEntity?>(null) }
 
     LaunchedEffect(state) {
         state.load()
@@ -98,6 +107,14 @@ fun App(
                                 Screen.News -> stringResource(Res.string.news)
                                 Screen.Pet -> stringResource(Res.string.pet_profile_title)
                                 Screen.PetEditor -> stringResource(Res.string.pet_edit_title)
+                                Screen.WeightHistory -> stringResource(Res.string.weight_history_title)
+                                Screen.WeightEditor -> stringResource(
+                                    if (editedWeight == null) {
+                                        Res.string.weight_add_title
+                                    } else {
+                                        Res.string.weight_edit_title
+                                    },
+                                )
                                 Screen.Editor -> stringResource(
                                     if (editedTask == null) Res.string.new_case else Res.string.change_case,
                                 )
@@ -110,12 +127,20 @@ fun App(
                             TextButton(onClick = { screen = Screen.Today }) {
                                 Text(stringResource(Res.string.back))
                             }
+                        } else if (screen == Screen.WeightHistory) {
+                            TextButton(onClick = { screen = Screen.Pet }) {
+                                Text(stringResource(Res.string.back))
+                            }
                         }
                     },
                 )
             },
             bottomBar = {
-                if (screen != Screen.Editor && screen != Screen.PetEditor) {
+                if (screen != Screen.Editor &&
+                    screen != Screen.PetEditor &&
+                    screen != Screen.WeightHistory &&
+                    screen != Screen.WeightEditor
+                ) {
                     AppNavigationBar(
                         selected = screen,
                         onSelect = { screen = it },
@@ -171,6 +196,7 @@ fun App(
                     Screen.Pet -> PetScreen(
                         state = state,
                         onEdit = { screen = Screen.PetEditor },
+                        onWeightClick = { screen = Screen.WeightHistory },
                     )
 
                     Screen.PetEditor -> PetEditorScreen(
@@ -183,6 +209,38 @@ fun App(
                             }
                         },
                         onCancel = { screen = Screen.Pet },
+                    )
+
+                    Screen.WeightHistory -> WeightHistoryScreen(
+                        measurements = state.weightHistory,
+                        onAdd = {
+                            editedWeight = null
+                            screen = Screen.WeightEditor
+                        },
+                        onEdit = { measurement ->
+                            editedWeight = measurement
+                            screen = Screen.WeightEditor
+                        },
+                    )
+
+                    Screen.WeightEditor -> WeightEditorScreen(
+                        petId = state.activePetId,
+                        measurement = editedWeight,
+                        today = state.today,
+                        isSaving = state.isSaving,
+                        onSave = { measurement ->
+                            state.saveWeight(measurement) {
+                                screen = Screen.WeightHistory
+                            }
+                        },
+                        onDelete = editedWeight?.let { measurement ->
+                            {
+                                state.deleteWeight(measurement) {
+                                    screen = Screen.WeightHistory
+                                }
+                            }
+                        },
+                        onCancel = { screen = Screen.WeightHistory },
                     )
 
                     Screen.Editor -> TaskEditorScreen(

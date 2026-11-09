@@ -32,6 +32,8 @@ internal class AppState(
         private set
     var latestWeight by mutableStateOf<WeightMeasurementEntity?>(null)
         private set
+    var weightHistory by mutableStateOf<List<WeightMeasurementEntity>>(emptyList())
+        private set
     var healthRecordCount by mutableStateOf(0)
         private set
     var isLoading by mutableStateOf(true)
@@ -118,6 +120,32 @@ internal class AppState(
         }
     }
 
+    fun saveWeight(measurement: WeightMeasurementEntity, onSaved: () -> Unit) {
+        scope.launch {
+            isSaving = true
+            runCatching {
+                repository.saveWeight(activePetId, measurement)
+                refreshWeights()
+            }.onSuccess {
+                onSaved()
+            }.onFailure(::showError)
+            isSaving = false
+        }
+    }
+
+    fun deleteWeight(measurement: WeightMeasurementEntity, onDeleted: () -> Unit) {
+        scope.launch {
+            isSaving = true
+            runCatching {
+                repository.deleteWeight(activePetId, measurement.id)
+                refreshWeights()
+            }.onSuccess {
+                onDeleted()
+            }.onFailure(::showError)
+            isSaving = false
+        }
+    }
+
     fun clearError() {
         errorMessage = null
     }
@@ -125,7 +153,7 @@ internal class AppState(
     private suspend fun refresh() {
         pet = repository.getOrCreateActivePet()
         tasks = repository.getTasks(activePetId)
-        latestWeight = repository.getLatestWeight(activePetId)
+        refreshWeights()
         healthRecordCount = repository.getHealthRecordCount(activePetId)
         refreshCompletions()
     }
@@ -133,6 +161,11 @@ internal class AppState(
     private suspend fun refreshCompletions() {
         val endDate = today.plus(6, DateTimeUnit.DAY)
         completions = repository.getCompletions(activePetId, today.toString(), endDate.toString())
+    }
+
+    private suspend fun refreshWeights() {
+        weightHistory = repository.getWeightHistory(activePetId)
+        latestWeight = weightHistory.firstOrNull()
     }
 
     private fun showError(throwable: Throwable) {

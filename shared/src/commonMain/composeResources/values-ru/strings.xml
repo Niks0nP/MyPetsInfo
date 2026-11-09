@@ -104,4 +104,24 @@
     <string name="pet_discard_body">Несохранённые изменения профиля будут потеряны.</string>
     <string name="pet_discard_action">Отменить изменения</string>
     <string name="pet_keep_editing_action">Продолжить редактирование</string>
+
+    <!-- История веса -->
+    <string name="weight_history_title">История веса</string>
+    <string name="weight_add_title">Добавить вес</string>
+    <string name="weight_edit_title">Изменить вес</string>
+    <string name="weight_add_action">Добавить измерение</string>
+    <string name="weight_edit_action">Изменить измерение</string>
+    <string name="weight_measurement_date">Дата измерения</string>
+    <string name="weight_value_label">Вес, кг</string>
+    <string name="weight_value_hint">Например, 4,5</string>
+    <string name="weight_note_label">Заметка</string>
+    <string name="weight_date_locked_hint">При редактировании дата измерения не меняется.</string>
+    <string name="weight_required_error">Введите вес</string>
+    <string name="weight_invalid_error">Введите вес от 0,01 до 1000 кг</string>
+    <string name="weight_delete_action">Удалить измерение</string>
+    <string name="weight_empty_title">Измерений веса пока нет</string>
+    <string name="weight_empty_body">Добавьте первый замер, чтобы отслеживать изменения.</string>
+    <string name="weight_same_day_hint">Повторное добавление веса на ту же дату обновит существующий замер.</string>
+    <string name="weight_note_empty">Без заметки</string>
+    <string name="weight_saved_on">Измерено %1$s</string>
 </resources>

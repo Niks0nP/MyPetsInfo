@@ -67,6 +67,37 @@ interface CareDao {
     )
     suspend fun getLatestWeight(petId: Long): WeightMeasurementEntity?
 
+    @Query(
+        """
+        SELECT * FROM weight_measurements
+        WHERE petId = :petId
+        ORDER BY measuredOn DESC, id DESC
+        LIMIT 100
+        """,
+    )
+    suspend fun getWeightHistory(petId: Long): List<WeightMeasurementEntity>
+
+    @Query(
+        """
+        SELECT * FROM weight_measurements
+        WHERE petId = :petId AND measuredOn = :measuredOn
+        LIMIT 1
+        """,
+    )
+    suspend fun getWeightForDate(petId: Long, measuredOn: String): WeightMeasurementEntity?
+
+    @Query("SELECT * FROM weight_measurements WHERE id = :measurementId AND petId = :petId LIMIT 1")
+    suspend fun getWeight(petId: Long, measurementId: Long): WeightMeasurementEntity?
+
+    @Insert
+    suspend fun insertWeight(measurement: WeightMeasurementEntity): Long
+
+    @Update
+    suspend fun updateWeight(measurement: WeightMeasurementEntity)
+
+    @Query("DELETE FROM weight_measurements WHERE id = :measurementId AND petId = :petId")
+    suspend fun deleteWeight(petId: Long, measurementId: Long)
+
     @Query("SELECT COUNT(*) FROM health_records WHERE petId = :petId")
     suspend fun getHealthRecordCount(petId: Long): Int
 }

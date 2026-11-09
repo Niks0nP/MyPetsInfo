@@ -104,4 +104,24 @@
     <string name="pet_discard_body">Your unsaved profile changes will be lost.</string>
     <string name="pet_discard_action">Discard</string>
     <string name="pet_keep_editing_action">Keep editing</string>
+
+    <!-- Weight history -->
+    <string name="weight_history_title">Weight history</string>
+    <string name="weight_add_title">Add weight</string>
+    <string name="weight_edit_title">Edit weight</string>
+    <string name="weight_add_action">Add measurement</string>
+    <string name="weight_edit_action">Edit measurement</string>
+    <string name="weight_measurement_date">Measurement date</string>
+    <string name="weight_value_label">Weight, kg</string>
+    <string name="weight_value_hint">For example, 4.5</string>
+    <string name="weight_note_label">Note</string>
+    <string name="weight_date_locked_hint">The date stays fixed when editing a measurement.</string>
+    <string name="weight_required_error">Enter the weight</string>
+    <string name="weight_invalid_error">Enter a weight from 0.01 to 1000 kg</string>
+    <string name="weight_delete_action">Delete measurement</string>
+    <string name="weight_empty_title">No weight measurements</string>
+    <string name="weight_empty_body">Add the first measurement to start tracking changes.</string>
+    <string name="weight_same_day_hint">Adding another measurement for the same date updates the existing one.</string>
+    <string name="weight_note_empty">No note</string>
+    <string name="weight_saved_on">Measured on %1$s</string>
 </resources>

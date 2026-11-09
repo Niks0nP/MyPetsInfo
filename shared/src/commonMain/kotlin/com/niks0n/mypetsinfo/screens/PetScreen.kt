@@ -1,6 +1,7 @@
 package com.niks0n.mypetsinfo.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun PetScreen(
     state: AppState,
     onEdit: () -> Unit,
+    onWeightClick: () -> Unit,
 ) {
     PetScreenContent(
         pet = state.pet,
@@ -54,6 +56,7 @@ internal fun PetScreen(
         latestWeight = state.latestWeight,
         healthRecordCount = state.healthRecordCount,
         onEdit = onEdit,
+        onWeightClick = onWeightClick,
     )
 }
 
@@ -64,6 +67,7 @@ private fun PetScreenContent(
     latestWeight: WeightMeasurementEntity?,
     healthRecordCount: Int,
     onEdit: () -> Unit,
+    onWeightClick: () -> Unit,
 ) {
     val unknown = stringResource(Res.string.pet_unknown_value)
     val age = pet.birthDate?.let { calculateAge(it, today) }
@@ -152,6 +156,7 @@ private fun PetScreenContent(
                 } ?: stringResource(Res.string.pet_weight_empty),
                 supportingText = latestWeight?.measuredOn
                     ?: stringResource(Res.string.pet_weight_empty_hint),
+                onClick = onWeightClick,
             )
         }
         item {
@@ -313,6 +318,7 @@ private fun SummaryCard(
     title: String,
     value: String,
     supportingText: String,
+    onClick: (() -> Unit)? = null,
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -320,7 +326,10 @@ private fun SummaryCard(
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppSpacing.md),
+            .padding(horizontal = AppSpacing.md)
+            .then(
+                if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
+            ),
     ) {
         Column(modifier = Modifier.padding(AppSpacing.md)) {
             Text(title, style = MaterialTheme.typography.titleMedium)
@@ -383,6 +392,7 @@ private fun PetScreenPreview() {
                 ),
                 healthRecordCount = 0,
                 onEdit = {},
+                onWeightClick = {},
             )
         }
     }

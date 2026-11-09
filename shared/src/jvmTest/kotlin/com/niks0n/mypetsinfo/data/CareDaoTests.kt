@@ -124,4 +124,95 @@ internal class CareDaoTests {
         assertEquals(1, dao.getTasks(petId).size)
         assertEquals("Золотистый ретривер", dao.getPet(petId)?.breed)
     }
+
+    @Test
+    fun `weight history is ordered and isolated by pet`() = runTest {
+        val firstPetId = dao.insertPet(PetEntity(name = "Мило"))
+        val secondPetId = dao.insertPet(PetEntity(name = "Луна"))
+
+        dao.insertWeight(
+            WeightMeasurementEntity(
+                petId = firstPetId,
+                measuredOn = "2026-11-01",
+                weightGrams = 28_000,
+            ),
+        )
+        dao.insertWeight(
+            WeightMeasurementEntity(
+                petId = firstPetId,
+                measuredOn = "2026-11-09",
+                weightGrams = 28_400,
+            ),
+        )
+        dao.insertWeight(
+            WeightMeasurementEntity(
+                petId = secondPetId,
+                measuredOn = "2026-11-09",
+                weightGrams = 4_200,
+            ),
+        )
+
+        assertEquals(
+            listOf(28_400L, 28_000L),
+            dao.getWeightHistory(firstPetId).map { it.weightGrams },
+        )
+        assertEquals(listOf(4_200L), dao.getWeightHistory(secondPetId).map { it.weightGrams })
+    }
+
+    @Test
+    fun `saving weight twice on the same date updates the existing measurement`() = runTest {
+        val petId = dao.insertPet(PetEntity(name = "Мило"))
+        val repository = PetRepository(dao)
+
+        val first = repository.saveWeight(
+            petId = petId,
+            measurement = WeightMeasurementEntity(
+                petId = petId,
+                measuredOn = "2026-11-09",
+                weightGrams = 28_000,
+            ),
+        )
+        val updated = repository.saveWeight(
+            petId = petId,
+            measurement = WeightMeasurementEntity(
+                petId = petId,
+                measuredOn = "2026-11-09",
+                weightGrams = 28_400,
+                note = "После прогулки",
+            ),
+        )
+
+        assertEquals(first.id, updated.id)
+        assertEquals(1, dao.getWeightHistory(petId).size)
+        assertEquals(28_400L, dao.getLatestWeight(petId)?.weightGrams)
+        assertEquals("После прогулки", dao.getLatestWeight(petId)?.note)
+    }
+
+    @Test
+    fun `deleting weight removes only the selected pets measurement`() = runTest {
+        val firstPetId = dao.insertPet(PetEntity(name = "Мило"))
+        val secondPetId = dao.insertPet(PetEntity(name = "Луна"))
+        val repository = PetRepository(dao)
+        val first = repository.saveWeight(
+            firstPetId,
+            WeightMeasurementEntity(
+                petId = firstPetId,
+                measuredOn = "2026-11-09",
+                weightGrams = 28_400,
+            ),
+        )
+        repository.saveWeight(
+            secondPetId,
+            WeightMeasurementEntity(
+                petId = secondPetId,
+                measuredOn = "2026-11-09",
+                weightGrams = 4_200,
+            ),
+        )
+
+        repository.deleteWeight(firstPetId, first.id)
+
+        assertTrue(dao.getWeightHistory(firstPetId).isEmpty())
+        assertEquals(1, dao.getWeightHistory(secondPetId).size)
+    }
 }
