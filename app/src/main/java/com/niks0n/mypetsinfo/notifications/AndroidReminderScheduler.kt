@@ -32,6 +32,7 @@ class AndroidReminderScheduler(context: Context) : ReminderScheduler {
         scheduleReminder(
             context = appContext,
             taskId = task.id,
+            petId = task.petId,
             title = task.title,
             description = task.description,
             hour = task.hour,
@@ -62,6 +63,7 @@ class AndroidReminderScheduler(context: Context) : ReminderScheduler {
         const val CHANNEL_ID = "pet_care_reminders"
 
         internal const val EXTRA_TASK_ID = "task_id"
+        internal const val EXTRA_PET_ID = "pet_id"
         internal const val EXTRA_TITLE = "title"
         internal const val EXTRA_DESCRIPTION = "description"
         internal const val EXTRA_HOUR = "hour"
@@ -71,6 +73,7 @@ class AndroidReminderScheduler(context: Context) : ReminderScheduler {
         internal fun scheduleReminder(
             context: Context,
             taskId: Long,
+            petId: Long,
             title: String,
             description: String,
             hour: Int,
@@ -82,6 +85,7 @@ class AndroidReminderScheduler(context: Context) : ReminderScheduler {
                 ?.toEpochMilli()
                 ?: return
             val intent = reminderIntent(context, taskId).apply {
+                putExtra(EXTRA_PET_ID, petId)
                 putExtra(EXTRA_TITLE, title)
                 putExtra(EXTRA_DESCRIPTION, description)
                 putExtra(EXTRA_HOUR, hour)
@@ -140,6 +144,7 @@ class AndroidReminderScheduler(context: Context) : ReminderScheduler {
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val taskId = intent.getLongExtra(AndroidReminderScheduler.EXTRA_TASK_ID, 0L)
+        val petId = intent.getLongExtra(AndroidReminderScheduler.EXTRA_PET_ID, 0L)
         val title = intent.getStringExtra(AndroidReminderScheduler.EXTRA_TITLE).orEmpty()
         val description = intent.getStringExtra(AndroidReminderScheduler.EXTRA_DESCRIPTION).orEmpty()
         val hour = intent.getIntExtra(AndroidReminderScheduler.EXTRA_HOUR, 9)
@@ -155,6 +160,7 @@ class ReminderReceiver : BroadcastReceiver() {
                 taskId.toRequestCode(),
                 Intent(context, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    putExtra(AndroidReminderScheduler.EXTRA_PET_ID, petId)
                 },
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
@@ -172,6 +178,7 @@ class ReminderReceiver : BroadcastReceiver() {
         AndroidReminderScheduler.scheduleReminder(
             context = context,
             taskId = taskId,
+            petId = petId,
             title = title,
             description = description,
             hour = hour,

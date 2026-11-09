@@ -107,12 +107,14 @@ private fun ScheduleScreenPreview() {
     val tasks = listOf(
         CareTaskEntity(
             id = 1,
+            petId = 1,
             title = "Покормить",
             hour = 9,
             minute = 0,
         ),
         CareTaskEntity(
             id = 2,
+            petId = 1,
             title = "Расчесать шерсть",
             hour = 18,
             minute = 30,
@@ -120,6 +122,7 @@ private fun ScheduleScreenPreview() {
         ),
         CareTaskEntity(
             id = 3,
+            petId = 1,
             title = "Почистить лоток",
             hour = 20,
             minute = 0,

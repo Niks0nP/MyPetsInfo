@@ -18,7 +18,7 @@ class BootReceiver : BroadcastReceiver() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
                 val database = buildDatabase(getDatabaseBuilder(context))
-                val tasks = PetRepository(database.careDao()).getTasks()
+                val tasks = PetRepository(database.careDao()).getAllEnabledTasks()
                 AndroidReminderScheduler(context).reschedule(tasks)
                 database.close()
             } finally {

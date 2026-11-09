@@ -31,9 +31,11 @@ internal class CareDaoTests {
 
     @Test
     fun `inserting a task and returning the inserted Id`() = runTest {
+        val petId = dao.insertPet(PetEntity(name = "Мило"))
 
         val careTaskEntity = CareTaskEntity(
             id = 0,
+            petId = petId,
             title = "test task",
             description = "",
             hour = 10,
@@ -41,7 +43,7 @@ internal class CareDaoTests {
         )
 
         val resultInserting = dao.insertTask(careTaskEntity)
-        val getTask = dao.getTasks()
+        val getTask = dao.getTasks(petId)
 
         assertTrue(resultInserting > 0)
         assertEquals(1, getTask.size)
@@ -50,7 +52,9 @@ internal class CareDaoTests {
 
     @Test
     fun `delete not existing entity`() = runTest {
+        val petId = dao.insertPet(PetEntity(name = "Мило"))
         val notExistingEntity = CareTaskEntity(
+            petId = petId,
             title = "title",
             hour = 10,
             minute = 5
@@ -59,8 +63,65 @@ internal class CareDaoTests {
         val taskId = dao.insertTask(notExistingEntity)
         val savedTask = notExistingEntity.copy(id = taskId)
 
-        dao.deleteTask(Long.MAX_VALUE)
+        dao.deleteTask(petId, Long.MAX_VALUE)
 
-        assertEquals(listOf(savedTask), dao.getTasks())
+        assertEquals(listOf(savedTask), dao.getTasks(petId))
+    }
+
+    @Test
+    fun `pet scoped queries keep two pets isolated`() = runTest {
+        val firstPetId = dao.insertPet(PetEntity(name = "Мило"))
+        val secondPetId = dao.insertPet(PetEntity(name = "Луна"))
+
+        val firstTaskId = dao.insertTask(
+            CareTaskEntity(
+                petId = firstPetId,
+                title = "Прогулка",
+                hour = 9,
+                minute = 0,
+            ),
+        )
+        dao.insertTask(
+            CareTaskEntity(
+                petId = secondPetId,
+                title = "Кормление",
+                hour = 10,
+                minute = 0,
+            ),
+        )
+        dao.markCompleted(TaskCompletionEntity(firstTaskId, "2026-11-09"))
+
+        assertEquals(listOf("Прогулка"), dao.getTasks(firstPetId).map { it.title })
+        assertEquals(listOf("Кормление"), dao.getTasks(secondPetId).map { it.title })
+        assertEquals(
+            1,
+            dao.getCompletions(firstPetId, "2026-11-09", "2026-11-09").size,
+        )
+        assertTrue(
+            dao.getCompletions(secondPetId, "2026-11-09", "2026-11-09").isEmpty(),
+        )
+    }
+
+    @Test
+    fun `updating pet preserves owned tasks`() = runTest {
+        val petId = dao.insertPet(PetEntity(name = "Мило"))
+        dao.insertTask(
+            CareTaskEntity(
+                petId = petId,
+                title = "Прогулка",
+                hour = 9,
+                minute = 0,
+            ),
+        )
+
+        dao.updatePet(
+            requireNotNull(dao.getPet(petId)).copy(
+                breed = "Золотистый ретривер",
+                description = "Любит долгие прогулки",
+            ),
+        )
+
+        assertEquals(1, dao.getTasks(petId).size)
+        assertEquals("Золотистый ретривер", dao.getPet(petId)?.breed)
     }
 }

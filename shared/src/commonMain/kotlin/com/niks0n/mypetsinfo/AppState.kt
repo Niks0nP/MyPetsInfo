@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.niks0n.mypetsinfo.data.CareTaskEntity
+import com.niks0n.mypetsinfo.data.LEGACY_PET_ID
 import com.niks0n.mypetsinfo.data.PetEntity
 import com.niks0n.mypetsinfo.data.PetRepository
 import com.niks0n.mypetsinfo.data.TaskCompletionEntity
+import com.niks0n.mypetsinfo.data.WeightMeasurementEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -26,7 +28,11 @@ internal class AppState(
         private set
     var completions by mutableStateOf<Set<TaskCompletionEntity>>(emptySet())
         private set
-    var pet by mutableStateOf(PetEntity(name = "Мой питомец", species = ""))
+    var pet by mutableStateOf(PetEntity(id = LEGACY_PET_ID, name = ""))
+        private set
+    var latestWeight by mutableStateOf<WeightMeasurementEntity?>(null)
+        private set
+    var healthRecordCount by mutableStateOf(0)
         private set
     var isLoading by mutableStateOf(true)
         private set
@@ -37,6 +43,9 @@ internal class AppState(
 
     val today: LocalDate
         get() = currentDate()
+
+    val activePetId: Long
+        get() = pet.id
 
     suspend fun load() {
         isLoading = true
@@ -57,7 +66,7 @@ internal class AppState(
     fun setCompleted(taskId: Long, date: LocalDate, completed: Boolean) {
         scope.launch {
             runCatching {
-                repository.setCompleted(taskId, date.toString(), completed)
+                repository.setCompleted(activePetId, taskId, date.toString(), completed)
                 refreshCompletions()
             }.onFailure(::showError)
         }
@@ -67,7 +76,7 @@ internal class AppState(
         scope.launch {
             isSaving = true
             runCatching {
-                val saved = repository.saveTask(task)
+                val saved = repository.saveTask(activePetId, task)
                 if (saved.isEnabled) {
                     reminderScheduler.schedule(saved)
                 } else {
@@ -85,7 +94,7 @@ internal class AppState(
         scope.launch {
             isSaving = true
             runCatching {
-                repository.deleteTask(task.id)
+                repository.deleteTask(activePetId, task.id)
                 reminderScheduler.cancel(task.id)
                 refresh()
             }.onSuccess {
@@ -95,13 +104,15 @@ internal class AppState(
         }
     }
 
-    fun savePet(name: String, species: String) {
+    fun savePet(updated: PetEntity, onSaved: () -> Unit) {
         scope.launch {
             isSaving = true
             runCatching {
-                val updated = PetEntity(name = name, species = species)
-                repository.savePet(updated)
+                require(updated.id == activePetId) { "Cannot replace the active pet identity" }
+                repository.updatePet(updated)
                 pet = updated
+            }.onSuccess {
+                onSaved()
             }.onFailure(::showError)
             isSaving = false
         }
@@ -112,14 +123,16 @@ internal class AppState(
     }
 
     private suspend fun refresh() {
-        tasks = repository.getTasks()
-        pet = repository.getPet()
+        pet = repository.getOrCreateActivePet()
+        tasks = repository.getTasks(activePetId)
+        latestWeight = repository.getLatestWeight(activePetId)
+        healthRecordCount = repository.getHealthRecordCount(activePetId)
         refreshCompletions()
     }
 
     private suspend fun refreshCompletions() {
         val endDate = today.plus(6, DateTimeUnit.DAY)
-        completions = repository.getCompletions(today.toString(), endDate.toString())
+        completions = repository.getCompletions(activePetId, today.toString(), endDate.toString())
     }
 
     private fun showError(throwable: Throwable) {

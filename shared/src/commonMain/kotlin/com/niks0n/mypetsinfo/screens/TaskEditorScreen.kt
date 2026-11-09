@@ -53,6 +53,7 @@ private val weekDayShortNameResources = listOf(
 @Composable
 internal fun TaskEditorScreen(
     task: CareTaskEntity?,
+    petId: Long,
     isSaving: Boolean,
     onSave: (CareTaskEntity) -> Unit,
     onDelete: (() -> Unit)?,
@@ -164,6 +165,7 @@ internal fun TaskEditorScreen(
                         onSave(
                             CareTaskEntity(
                                 id = task?.id ?: 0,
+                                petId = petId,
                                 title = title.trim(),
                                 description = description.trim(),
                                 hour = parsedTime.first,

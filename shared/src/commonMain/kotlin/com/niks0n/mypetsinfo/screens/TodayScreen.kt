@@ -35,6 +35,9 @@ import com.niks0n.mypetsinfo.formatFullDate
 import com.niks0n.mypetsinfo.formatTime
 import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 import kotlinx.datetime.LocalDate
+import mypetsinfo.shared.generated.resources.Res
+import mypetsinfo.shared.generated.resources.tasks_today
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun TodayScreen(
@@ -117,6 +120,7 @@ private fun TodayScreenPreview() {
     val tasks = listOf(
         CareTaskEntity(
             id = 1,
+            petId = 1,
             title = "Покормить",
             description = "Влажный корм, половина пачки",
             hour = 9,
@@ -124,12 +128,14 @@ private fun TodayScreenPreview() {
         ),
         CareTaskEntity(
             id = 2,
+            petId = 1,
             title = "Поменять воду",
             hour = 12,
             minute = 30,
         ),
         CareTaskEntity(
             id = 3,
+            petId = 1,
             title = "Поиграть",
             description = "Не меньше 15 минут",
             hour = 19,
@@ -169,7 +175,7 @@ private fun ProgressCard(completed: Int, total: Int) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Забота на сегодня", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(Res.string.tasks_today), fontWeight = FontWeight.SemiBold)
                 Text("$completed из $total")
             }
             LinearProgressIndicator(

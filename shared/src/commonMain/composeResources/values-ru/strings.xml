@@ -54,4 +54,54 @@
     <string name="day_friday_short">Пт</string>
     <string name="day_saturday_short">Сб</string>
     <string name="day_sunday_short">Вс</string>
+
+    <!-- Today Screen -->
+    <string name="tasks_today">Дела на сегодня</string>
+
+    <!-- Профиль питомца -->
+    <string name="pet_profile_title">Профиль питомца</string>
+    <string name="pet_edit_title">Редактирование профиля</string>
+    <string name="pet_default_name">Мой питомец</string>
+    <string name="pet_unknown_value">Не указано</string>
+    <string name="pet_avatar_description">Фотография питомца</string>
+    <string name="pet_cover_description">Обложка профиля питомца</string>
+    <string name="pet_edit_action">Редактировать профиль</string>
+    <string name="pet_about_title">О питомце</string>
+    <string name="pet_about_empty">Добавьте короткий рассказ о питомце.</string>
+    <string name="pet_age_label">Возраст</string>
+    <string name="pet_age_years">%1$d лет</string>
+    <string name="pet_weight_label">Последний вес</string>
+    <string name="pet_weight_kg">%1$s кг</string>
+    <string name="pet_color_label">Окрас</string>
+    <string name="pet_health_label">Записи здоровья</string>
+    <string name="pet_health_count">Записей: %1$d</string>
+    <string name="pet_weight_title">Вес</string>
+    <string name="pet_weight_empty">Замеров пока нет</string>
+    <string name="pet_weight_empty_hint">История веса появится здесь после первого измерения.</string>
+    <string name="pet_health_title">История здоровья</string>
+    <string name="pet_health_empty">Записей пока нет</string>
+    <string name="pet_health_empty_hint">Это означает только то, что записи о здоровье ещё не добавлялись.</string>
+    <string name="pet_profile_details_title">Данные профиля</string>
+    <string name="pet_name_label">Имя</string>
+    <string name="pet_species_label">Вид</string>
+    <string name="pet_species_hint">Кошка, собака…</string>
+    <string name="pet_breed_label">Порода</string>
+    <string name="pet_sex_label">Пол</string>
+    <string name="pet_sex_unknown">Не указан</string>
+    <string name="pet_sex_male">Самец</string>
+    <string name="pet_sex_female">Самка</string>
+    <string name="pet_birth_date_label">Дата рождения</string>
+    <string name="pet_birth_date_hint">ГГГГ-ММ-ДД</string>
+    <string name="pet_description_label">О питомце</string>
+    <string name="pet_optional_hint">Необязательно</string>
+    <string name="pet_save_action">Сохранить</string>
+    <string name="pet_cancel_action">Отмена</string>
+    <string name="pet_saving">Сохраняем…</string>
+    <string name="pet_name_required">Введите имя питомца</string>
+    <string name="pet_birth_date_invalid">Введите корректную дату в формате ГГГГ-ММ-ДД</string>
+    <string name="pet_birth_date_future">Дата рождения не может быть в будущем</string>
+    <string name="pet_discard_title">Отменить изменения?</string>
+    <string name="pet_discard_body">Несохранённые изменения профиля будут потеряны.</string>
+    <string name="pet_discard_action">Отменить изменения</string>
+    <string name="pet_keep_editing_action">Продолжить редактирование</string>
 </resources>

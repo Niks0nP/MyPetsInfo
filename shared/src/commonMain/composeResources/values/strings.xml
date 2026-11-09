@@ -54,4 +54,54 @@
     <string name="day_friday_short">Fri</string>
     <string name="day_saturday_short">Sat</string>
     <string name="day_sunday_short">Sun</string>
+
+    <!-- Today Screen -->
+    <string name="tasks_today">Today tasks</string>
+
+    <!-- Pet profile -->
+    <string name="pet_profile_title">Pet profile</string>
+    <string name="pet_edit_title">Edit profile</string>
+    <string name="pet_default_name">My pet</string>
+    <string name="pet_unknown_value">Not specified</string>
+    <string name="pet_avatar_description">Pet profile photo</string>
+    <string name="pet_cover_description">Pet profile cover</string>
+    <string name="pet_edit_action">Edit profile</string>
+    <string name="pet_about_title">About</string>
+    <string name="pet_about_empty">Add a short description about your pet.</string>
+    <string name="pet_age_label">Age</string>
+    <string name="pet_age_years">%1$d years</string>
+    <string name="pet_weight_label">Latest weight</string>
+    <string name="pet_weight_kg">%1$s kg</string>
+    <string name="pet_color_label">Color</string>
+    <string name="pet_health_label">Health records</string>
+    <string name="pet_health_count">%1$d records</string>
+    <string name="pet_weight_title">Weight</string>
+    <string name="pet_weight_empty">No measurements yet</string>
+    <string name="pet_weight_empty_hint">Weight history will appear here after the first measurement.</string>
+    <string name="pet_health_title">Health history</string>
+    <string name="pet_health_empty">No records yet</string>
+    <string name="pet_health_empty_hint">This means only that no health records have been added yet.</string>
+    <string name="pet_profile_details_title">Profile details</string>
+    <string name="pet_name_label">Name</string>
+    <string name="pet_species_label">Species</string>
+    <string name="pet_species_hint">Cat, dog…</string>
+    <string name="pet_breed_label">Breed</string>
+    <string name="pet_sex_label">Sex</string>
+    <string name="pet_sex_unknown">Not specified</string>
+    <string name="pet_sex_male">Male</string>
+    <string name="pet_sex_female">Female</string>
+    <string name="pet_birth_date_label">Birth date</string>
+    <string name="pet_birth_date_hint">YYYY-MM-DD</string>
+    <string name="pet_description_label">About your pet</string>
+    <string name="pet_optional_hint">Optional</string>
+    <string name="pet_save_action">Save</string>
+    <string name="pet_cancel_action">Cancel</string>
+    <string name="pet_saving">Saving…</string>
+    <string name="pet_name_required">Enter your pet’s name</string>
+    <string name="pet_birth_date_invalid">Use a valid date in YYYY-MM-DD format</string>
+    <string name="pet_birth_date_future">Birth date cannot be in the future</string>
+    <string name="pet_discard_title">Discard changes?</string>
+    <string name="pet_discard_body">Your unsaved profile changes will be lost.</string>
+    <string name="pet_discard_action">Discard</string>
+    <string name="pet_keep_editing_action">Keep editing</string>
 </resources>

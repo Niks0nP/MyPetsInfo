@@ -32,6 +32,7 @@ import org.koin.compose.koinInject
 import com.niks0n.mypetsinfo.data.CareTaskEntity
 import com.niks0n.mypetsinfo.data.PetRepository
 import com.niks0n.mypetsinfo.screens.NewsScreen
+import com.niks0n.mypetsinfo.screens.PetEditorScreen
 import com.niks0n.mypetsinfo.screens.PetScreen
 import com.niks0n.mypetsinfo.screens.ScheduleScreen
 import com.niks0n.mypetsinfo.screens.TaskEditorScreen
@@ -47,6 +48,8 @@ import mypetsinfo.shared.generated.resources.new_case
 import mypetsinfo.shared.generated.resources.news
 import mypetsinfo.shared.generated.resources.news_icon
 import mypetsinfo.shared.generated.resources.pet
+import mypetsinfo.shared.generated.resources.pet_edit_title
+import mypetsinfo.shared.generated.resources.pet_profile_title
 import mypetsinfo.shared.generated.resources.pet_icon
 import mypetsinfo.shared.generated.resources.plus_icon
 import mypetsinfo.shared.generated.resources.schedule
@@ -59,6 +62,7 @@ private enum class Screen {
     Schedule,
     News,
     Pet,
+    PetEditor,
     Editor,
 }
 
@@ -92,7 +96,8 @@ fun App(
                                 Screen.Today -> stringResource(Res.string.today)
                                 Screen.Schedule -> stringResource(Res.string.schedule)
                                 Screen.News -> stringResource(Res.string.news)
-                                Screen.Pet -> stringResource(Res.string.pet)
+                                Screen.Pet -> stringResource(Res.string.pet_profile_title)
+                                Screen.PetEditor -> stringResource(Res.string.pet_edit_title)
                                 Screen.Editor -> stringResource(
                                     if (editedTask == null) Res.string.new_case else Res.string.change_case,
                                 )
@@ -110,7 +115,7 @@ fun App(
                 )
             },
             bottomBar = {
-                if (screen != Screen.Editor) {
+                if (screen != Screen.Editor && screen != Screen.PetEditor) {
                     AppNavigationBar(
                         selected = screen,
                         onSelect = { screen = it },
@@ -163,10 +168,26 @@ fun App(
 
                     Screen.News -> NewsScreen()
 
-                    Screen.Pet -> PetScreen(state)
+                    Screen.Pet -> PetScreen(
+                        state = state,
+                        onEdit = { screen = Screen.PetEditor },
+                    )
+
+                    Screen.PetEditor -> PetEditorScreen(
+                        pet = state.pet,
+                        today = state.today,
+                        isSaving = state.isSaving,
+                        onSave = { updated ->
+                            state.savePet(updated) {
+                                screen = Screen.Pet
+                            }
+                        },
+                        onCancel = { screen = Screen.Pet },
+                    )
 
                     Screen.Editor -> TaskEditorScreen(
                         task = editedTask,
+                        petId = state.activePetId,
                         isSaving = state.isSaving,
                         onSave = { task ->
                             state.saveTask(task) {
