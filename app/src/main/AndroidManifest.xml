@@ -9,9 +9,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_my_pet"
+        android:icon="@mipmap/ic_my_pet_round"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_my_pet"
+        android:roundIcon="@mipmap/ic_my_pet_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyPetsInfo">
         <activity
