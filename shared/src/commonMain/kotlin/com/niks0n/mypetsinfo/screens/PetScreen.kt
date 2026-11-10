@@ -51,6 +51,7 @@ import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 import kotlinx.datetime.LocalDate
 import mypetsinfo.shared.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 private val Forest = Color(0xFF07513E)
@@ -94,6 +95,14 @@ private fun PetScreenContent(
         PetSex.FEMALE -> stringResource(Res.string.pet_sex_female)
         else -> stringResource(Res.string.pet_sex_unknown)
     }
+    val sexIcon = painterResource(
+        when (pet.sexCode) {
+            PetSex.MALE -> Res.drawable.gender_male_icon
+            PetSex.FEMALE -> Res.drawable.gender_female_icon
+            else -> Res.drawable.gender_unknown_icon
+        },
+    )
+    val ageText = age?.let { localizedAge(it) }
     val healthValue = if (healthRecordCount == 0) {
         stringResource(Res.string.pet_health_status_empty)
     } else {
@@ -112,6 +121,8 @@ private fun PetScreenContent(
                 name = pet.name.ifBlank { stringResource(Res.string.pet_default_name) },
                 breed = breed,
                 sex = sex,
+                sexIcon = sexIcon,
+                age = ageText,
                 onEdit = onEdit,
             )
         }
@@ -122,7 +133,7 @@ private fun PetScreenContent(
             ) {
                 ProfileFactCard(
                     icon = painterResource(Res.drawable.calendar_icon),
-                    value = age?.let { stringResource(Res.string.pet_age_years, it) } ?: unknown,
+                    value = ageText ?: unknown,
                     label = stringResource(Res.string.pet_age_label),
                     modifier = Modifier.weight(1f),
                 )
@@ -201,6 +212,8 @@ private fun ProfileHero(
     name: String,
     breed: String,
     sex: String,
+    sexIcon: Painter,
+    age: String?,
     onEdit: () -> Unit,
 ) {
     val coverDescription = stringResource(Res.string.pet_cover_description)
@@ -209,7 +222,7 @@ private fun ProfileHero(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(292.dp),
+            .height(330.dp),
     ) {
         Box(
             modifier = Modifier
@@ -252,7 +265,7 @@ private fun ProfileHero(
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(116.dp)
+                .height(156.dp)
                 .align(Alignment.BottomCenter),
         ) {}
 
@@ -304,12 +317,13 @@ private fun ProfileHero(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(start = 16.dp, end = 16.dp, bottom = 2.dp),
+                .align(Alignment.TopCenter)
+                .padding(start = 16.dp, top = 240.dp, end = 16.dp),
         ) {
             Text(
                 text = name,
-                style = MaterialTheme.typography.headlineMedium,
+                fontSize = 34.sp,
+                lineHeight = 38.sp,
                 fontWeight = FontWeight.Bold,
                 color = ForestDark,
                 maxLines = 1,
@@ -317,16 +331,47 @@ private fun ProfileHero(
             )
             Text(
                 text = breed,
-                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 18.sp,
+                lineHeight = 22.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = Forest,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = sex,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Spacer(Modifier.height(5.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    painter = sexIcon,
+                    contentDescription = null,
+                    tint = Forest,
+                    modifier = Modifier.size(18.dp),
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = sex,
+                    fontSize = 14.sp,
+                    lineHeight = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                if (age != null) {
+                    Text(
+                        text = "•",
+                        fontSize = 14.sp,
+                        lineHeight = 18.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 9.dp),
+                    )
+                    Text(
+                        text = age,
+                        fontSize = 14.sp,
+                        lineHeight = 18.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }
@@ -587,6 +632,11 @@ private fun formatKilograms(grams: Long): String {
     val whole = grams / 1000
     val tenths = (grams % 1000) / 100
     return if (tenths == 0L) whole.toString() else "$whole.$tenths"
+}
+
+@Composable
+private fun localizedAge(age: Int): String {
+    return pluralStringResource(Res.plurals.pet_age, age, age)
 }
 
 @Preview(

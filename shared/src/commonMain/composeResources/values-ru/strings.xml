@@ -72,6 +72,12 @@
     <string name="pet_about_empty">Добавьте короткий рассказ о питомце.</string>
     <string name="pet_age_label">Возраст</string>
     <string name="pet_age_years">%1$d лет</string>
+    <plurals name="pet_age">
+        <item quantity="one">%1$d год</item>
+        <item quantity="few">%1$d года</item>
+        <item quantity="many">%1$d лет</item>
+        <item quantity="other">%1$d лет</item>
+    </plurals>
     <string name="pet_weight_label">Последний вес</string>
     <string name="pet_weight_label_short">Вес</string>
     <string name="pet_weight_kg">%1$s кг</string>

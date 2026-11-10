@@ -72,6 +72,10 @@
     <string name="pet_about_empty">Add a short description about your pet.</string>
     <string name="pet_age_label">Age</string>
     <string name="pet_age_years">%1$d years</string>
+    <plurals name="pet_age">
+        <item quantity="one">%1$d year</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
     <string name="pet_weight_label">Latest weight</string>
     <string name="pet_weight_label_short">Weight</string>
     <string name="pet_weight_kg">%1$s kg</string>
