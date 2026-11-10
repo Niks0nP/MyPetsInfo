@@ -67,6 +67,7 @@
     <string name="pet_cover_description">Pet profile cover</string>
     <string name="pet_edit_action">Edit profile</string>
     <string name="pet_edit_photo">Change photo</string>
+    <string name="pet_edit_cover_photo">Change cover photo</string>
     <string name="pet_about_title">About</string>
     <string name="pet_read_more">Read more ›</string>
     <string name="pet_about_empty">Add a short description about your pet.</string>

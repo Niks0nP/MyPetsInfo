@@ -2,8 +2,13 @@ package com.niks0n.mypetsinfo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,14 +37,14 @@ import org.koin.compose.koinInject
 import com.niks0n.mypetsinfo.data.CareTaskEntity
 import com.niks0n.mypetsinfo.data.PetRepository
 import com.niks0n.mypetsinfo.data.WeightMeasurementEntity
-import com.niks0n.mypetsinfo.screens.NewsScreen
-import com.niks0n.mypetsinfo.screens.PetEditorScreen
-import com.niks0n.mypetsinfo.screens.PetScreen
-import com.niks0n.mypetsinfo.screens.ScheduleScreen
-import com.niks0n.mypetsinfo.screens.TaskEditorScreen
-import com.niks0n.mypetsinfo.screens.TodayScreen
-import com.niks0n.mypetsinfo.screens.WeightEditorScreen
-import com.niks0n.mypetsinfo.screens.WeightHistoryScreen
+import com.niks0n.mypetsinfo.screens.news.NewsScreen
+import com.niks0n.mypetsinfo.screens.pet.PetEditorScreen
+import com.niks0n.mypetsinfo.screens.pet.PetScreen
+import com.niks0n.mypetsinfo.screens.schedule.ScheduleScreen
+import com.niks0n.mypetsinfo.screens.schedule.TaskEditorScreen
+import com.niks0n.mypetsinfo.screens.today.TodayScreen
+import com.niks0n.mypetsinfo.screens.weight.WeightEditorScreen
+import com.niks0n.mypetsinfo.screens.weight.WeightHistoryScreen
 import com.niks0n.mypetsinfo.ui.theme.MyPetsInfoTheme
 import mypetsinfo.shared.generated.resources.Res
 import mypetsinfo.shared.generated.resources.add_case
@@ -80,6 +85,8 @@ fun App(
     repository: PetRepository = koinInject(),
     reminderScheduler: ReminderScheduler = NoOpReminderScheduler,
     requestNotificationPermission: () -> Unit = {},
+    petPhotoPicker: PetPhotoPicker = NoOpPetPhotoPicker,
+    onProfileStatusBarChanged: (Boolean) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val state = remember(repository, reminderScheduler) {
@@ -94,9 +101,16 @@ fun App(
         state.load()
     }
 
+    LaunchedEffect(screen) {
+        onProfileStatusBarChanged(screen == Screen.Pet)
+    }
+
     MyPetsInfoTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            contentWindowInsets = WindowInsets.safeDrawing.only(
+                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
+            ),
             topBar = {
                 if (screen != Screen.Pet) TopAppBar(
                     title = {
@@ -168,7 +182,8 @@ fun App(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(contentPadding),
+                    .padding(contentPadding)
+                    .consumeWindowInsets(contentPadding),
             ) {
                 when (screen) {
                     Screen.Today -> TodayScreen(
@@ -197,6 +212,33 @@ fun App(
                         state = state,
                         onEdit = { screen = Screen.PetEditor },
                         onWeightClick = { screen = Screen.WeightHistory },
+                        photoEditingEnabled = petPhotoPicker.isAvailable && !state.isSaving,
+                        onAvatarPhotoClick = {
+                            petPhotoPicker.pick(
+                                target = PetPhotoTarget.Avatar,
+                                onPicked = { assetId ->
+                                    state.savePetPhoto(
+                                        target = PetPhotoTarget.Avatar,
+                                        newAssetId = assetId,
+                                        deleteAsset = petPhotoPicker::delete,
+                                    )
+                                },
+                                onError = state::reportError,
+                            )
+                        },
+                        onCoverPhotoClick = {
+                            petPhotoPicker.pick(
+                                target = PetPhotoTarget.Cover,
+                                onPicked = { assetId ->
+                                    state.savePetPhoto(
+                                        target = PetPhotoTarget.Cover,
+                                        newAssetId = assetId,
+                                        deleteAsset = petPhotoPicker::delete,
+                                    )
+                                },
+                                onError = state::reportError,
+                            )
+                        },
                     )
 
                     Screen.PetEditor -> PetEditorScreen(

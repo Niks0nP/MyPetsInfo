@@ -1,4 +1,4 @@
-package com.niks0n.mypetsinfo.screens
+package com.niks0n.mypetsinfo.screens.schedule
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

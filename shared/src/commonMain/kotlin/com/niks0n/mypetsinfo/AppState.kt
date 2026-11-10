@@ -120,6 +120,37 @@ internal class AppState(
         }
     }
 
+    fun savePetPhoto(
+        target: PetPhotoTarget,
+        newAssetId: String,
+        deleteAsset: (String) -> Unit,
+    ) {
+        val oldAssetId = when (target) {
+            PetPhotoTarget.Avatar -> pet.avatarAssetId
+            PetPhotoTarget.Cover -> pet.coverAssetId
+        }
+        val updated = when (target) {
+            PetPhotoTarget.Avatar -> pet.copy(avatarAssetId = newAssetId)
+            PetPhotoTarget.Cover -> pet.copy(coverAssetId = newAssetId)
+        }
+
+        scope.launch {
+            isSaving = true
+            runCatching {
+                repository.updatePet(updated)
+                pet = updated
+            }.onSuccess {
+                if (oldAssetId != null && oldAssetId != newAssetId) {
+                    runCatching { deleteAsset(oldAssetId) }
+                }
+            }.onFailure { throwable ->
+                runCatching { deleteAsset(newAssetId) }
+                showError(throwable)
+            }
+            isSaving = false
+        }
+    }
+
     fun saveWeight(measurement: WeightMeasurementEntity, onSaved: () -> Unit) {
         scope.launch {
             isSaving = true
@@ -148,6 +179,10 @@ internal class AppState(
 
     fun clearError() {
         errorMessage = null
+    }
+
+    fun reportError(throwable: Throwable) {
+        showError(throwable)
     }
 
     private suspend fun refresh() {

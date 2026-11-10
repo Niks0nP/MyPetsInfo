@@ -1,4 +1,4 @@
-package com.niks0n.mypetsinfo.screens
+package com.niks0n.mypetsinfo.screens.news
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

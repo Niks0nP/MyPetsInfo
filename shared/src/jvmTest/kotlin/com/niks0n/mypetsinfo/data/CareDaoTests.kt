@@ -118,11 +118,21 @@ internal class CareDaoTests {
             requireNotNull(dao.getPet(petId)).copy(
                 breed = "Золотистый ретривер",
                 description = "Любит долгие прогулки",
+                avatarAssetId = "/app/files/pet_photos/avatar-new.jpg",
+                coverAssetId = "/app/files/pet_photos/cover-new.jpg",
             ),
         )
 
         assertEquals(1, dao.getTasks(petId).size)
         assertEquals("Золотистый ретривер", dao.getPet(petId)?.breed)
+        assertEquals(
+            "/app/files/pet_photos/avatar-new.jpg",
+            dao.getPet(petId)?.avatarAssetId,
+        )
+        assertEquals(
+            "/app/files/pet_photos/cover-new.jpg",
+            dao.getPet(petId)?.coverAssetId,
+        )
     }
 
     @Test

@@ -67,6 +67,7 @@
     <string name="pet_cover_description">Обложка профиля питомца</string>
     <string name="pet_edit_action">Редактировать профиль</string>
     <string name="pet_edit_photo">Изменить фотографию</string>
+    <string name="pet_edit_cover_photo">Изменить фотографию обложки</string>
     <string name="pet_about_title">О питомце</string>
     <string name="pet_read_more">Подробнее ›</string>
     <string name="pet_about_empty">Добавьте короткий рассказ о питомце.</string>
