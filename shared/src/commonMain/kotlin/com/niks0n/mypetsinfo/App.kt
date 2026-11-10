@@ -98,7 +98,7 @@ fun App(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                TopAppBar(
+                if (screen != Screen.Pet) TopAppBar(
                     title = {
                         Text(
                             text = when (screen) {
