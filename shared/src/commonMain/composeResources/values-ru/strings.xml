@@ -110,14 +110,15 @@
     <string name="pet_sex_male">Самец</string>
     <string name="pet_sex_female">Самка</string>
     <string name="pet_birth_date_label">Дата рождения</string>
-    <string name="pet_birth_date_hint">ГГГГ-ММ-ДД</string>
+    <string name="pet_birth_date_hint">ДД-ММ-ГГГГ</string>
+    <string name="pet_birth_date_select_action">Выбрать дату</string>
     <string name="pet_description_label">О питомце</string>
     <string name="pet_optional_hint">Необязательно</string>
     <string name="pet_save_action">Сохранить</string>
     <string name="pet_cancel_action">Отмена</string>
     <string name="pet_saving">Сохраняем…</string>
     <string name="pet_name_required">Введите имя питомца</string>
-    <string name="pet_birth_date_invalid">Введите корректную дату в формате ГГГГ-ММ-ДД</string>
+    <string name="pet_birth_date_invalid">Введите корректную дату в формате ДД-ММ-ГГГГ</string>
     <string name="pet_birth_date_future">Дата рождения не может быть в будущем</string>
     <string name="pet_discard_title">Отменить изменения?</string>
     <string name="pet_discard_body">Несохранённые изменения профиля будут потеряны.</string>
@@ -131,6 +132,9 @@
     <string name="weight_add_action">Добавить измерение</string>
     <string name="weight_edit_action">Изменить измерение</string>
     <string name="weight_measurement_date">Дата измерения</string>
+    <string name="weight_date_hint">ГГГГ-ММ-ДД</string>
+    <string name="weight_date_invalid">Введите корректную дату в формате ГГГГ-ММ-ДД</string>
+    <string name="weight_date_future">Дата измерения не может быть в будущем</string>
     <string name="weight_value_label">Вес, кг</string>
     <string name="weight_value_hint">Например, 4,5</string>
     <string name="weight_note_label">Заметка</string>

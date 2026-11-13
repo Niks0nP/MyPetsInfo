@@ -12,13 +12,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,10 +39,12 @@ import com.niks0n.mypetsinfo.data.PetSex
 import com.niks0n.mypetsinfo.ui.theme.AppSpacing
 import kotlinx.datetime.LocalDate
 import mypetsinfo.shared.generated.resources.Res
+import mypetsinfo.shared.generated.resources.calendar_icon
 import mypetsinfo.shared.generated.resources.pet_birth_date_future
 import mypetsinfo.shared.generated.resources.pet_birth_date_hint
 import mypetsinfo.shared.generated.resources.pet_birth_date_invalid
 import mypetsinfo.shared.generated.resources.pet_birth_date_label
+import mypetsinfo.shared.generated.resources.pet_birth_date_select_action
 import mypetsinfo.shared.generated.resources.pet_breed_label
 import mypetsinfo.shared.generated.resources.pet_cancel_action
 import mypetsinfo.shared.generated.resources.pet_color_label
@@ -56,8 +65,12 @@ import mypetsinfo.shared.generated.resources.pet_sex_male
 import mypetsinfo.shared.generated.resources.pet_sex_unknown
 import mypetsinfo.shared.generated.resources.pet_species_hint
 import mypetsinfo.shared.generated.resources.pet_species_label
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+private const val MILLIS_PER_DAY = 86_400_000L
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PetEditorScreen(
     pet: PetEntity,
@@ -66,15 +79,17 @@ internal fun PetEditorScreen(
     onSave: (PetEntity) -> Unit,
     onCancel: () -> Unit,
 ) {
+    val initialBirthDate = pet.birthDate.toBirthDateInput()
     var name by remember(pet.id) { mutableStateOf(pet.name) }
     var species by remember(pet.id) { mutableStateOf(pet.species) }
     var breed by remember(pet.id) { mutableStateOf(pet.breed.orEmpty()) }
     var sexCode by remember(pet.id) { mutableStateOf(pet.sexCode) }
-    var birthDate by remember(pet.id) { mutableStateOf(pet.birthDate.orEmpty()) }
+    var birthDate by remember(pet.id) { mutableStateOf(initialBirthDate) }
     var color by remember(pet.id) { mutableStateOf(pet.color.orEmpty()) }
     var description by remember(pet.id) { mutableStateOf(pet.description.orEmpty()) }
     var validationMessage by remember(pet.id) { mutableStateOf<String?>(null) }
     var showDiscardDialog by remember(pet.id) { mutableStateOf(false) }
+    var showBirthDatePicker by remember(pet.id) { mutableStateOf(false) }
 
     val nameRequiredMessage = stringResource(Res.string.pet_name_required)
     val invalidDateMessage = stringResource(Res.string.pet_birth_date_invalid)
@@ -85,19 +100,21 @@ internal fun PetEditorScreen(
         species = species.trim(),
         breed = breed.trim().ifEmpty { null },
         sexCode = sexCode,
-        birthDate = birthDate.trim().ifEmpty { null },
+        birthDate = birthDate.toBirthDateOrNull()?.toString(),
         color = color.trim().ifEmpty { null },
         description = description.trim().ifEmpty { null },
     )
 
     fun requestCancel() {
-        if (draft() == pet) onCancel() else showDiscardDialog = true
+        if (draft() == pet && birthDate.trim() == initialBirthDate) {
+            onCancel()
+        } else {
+            showDiscardDialog = true
+        }
     }
 
     fun saveDraft() {
-        val parsedDate = birthDate.trim()
-            .takeIf { it.isNotEmpty() }
-            ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+        val parsedDate = birthDate.toBirthDateOrNull()
         validationMessage = when {
             name.isBlank() -> nameRequiredMessage
             birthDate.isNotBlank() && parsedDate == null -> invalidDateMessage
@@ -190,6 +207,16 @@ internal fun PetEditorScreen(
                 label = { Text(stringResource(Res.string.pet_birth_date_label)) },
                 placeholder = { Text(stringResource(Res.string.pet_birth_date_hint)) },
                 supportingText = { Text(stringResource(Res.string.pet_optional_hint)) },
+                trailingIcon = {
+                    IconButton(onClick = { showBirthDatePicker = true }) {
+                        Icon(
+                            painter = painterResource(Res.drawable.calendar_icon),
+                            contentDescription = stringResource(
+                                Res.string.pet_birth_date_select_action,
+                            ),
+                        )
+                    }
+                },
                 singleLine = true,
                 isError = validationMessage == invalidDateMessage || validationMessage == futureDateMessage,
                 modifier = Modifier.fillMaxWidth(),
@@ -276,7 +303,93 @@ internal fun PetEditorScreen(
             },
         )
     }
+
+    if (showBirthDatePicker) {
+        BirthDatePickerDialog(
+            initialDate = birthDate.toBirthDateOrNull(),
+            today = today,
+            onDateSelected = { selectedDate ->
+                birthDate = selectedDate.formatBirthDate()
+                if (
+                    validationMessage == invalidDateMessage ||
+                    validationMessage == futureDateMessage
+                ) {
+                    validationMessage = null
+                }
+            },
+            onDismiss = { showBirthDatePicker = false },
+        )
+    }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BirthDatePickerDialog(
+    initialDate: LocalDate?,
+    today: LocalDate,
+    onDateSelected: (LocalDate) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val todayMillis = today.toDatePickerMillis()
+    val selectableDates = remember(todayMillis) {
+        object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                utcTimeMillis <= todayMillis
+        }
+    }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDate?.toDatePickerMillis(),
+        initialDisplayedMonthMillis = initialDate?.toDatePickerMillis() ?: todayMillis,
+        selectableDates = selectableDates,
+    )
+    val selectedDate = datePickerState.selectedDateMillis?.toPickerLocalDate()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                enabled = selectedDate != null,
+                onClick = {
+                    selectedDate?.let(onDateSelected)
+                    onDismiss()
+                },
+            ) {
+                Text(stringResource(Res.string.pet_birth_date_select_action))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(Res.string.pet_cancel_action))
+            }
+        },
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+private fun String?.toBirthDateInput(): String = this
+    ?.let { value -> runCatching { LocalDate.parse(value) }.getOrNull() }
+    ?.formatBirthDate()
+    ?: orEmpty()
+
+private fun String.toBirthDateOrNull(): LocalDate? {
+    val parts = trim().split('-')
+    if (parts.size != 3 || parts[0].length != 2 || parts[1].length != 2 || parts[2].length != 4) {
+        return null
+    }
+    val day = parts[0].toIntOrNull() ?: return null
+    val month = parts[1].toIntOrNull() ?: return null
+    val year = parts[2].toIntOrNull() ?: return null
+    return runCatching { LocalDate(year, month, day) }.getOrNull()
+}
+
+private fun LocalDate.formatBirthDate(): String =
+    "${day.toString().padStart(2, '0')}-${(month.ordinal + 1).toString().padStart(2, '0')}-$year"
+
+private fun LocalDate.toDatePickerMillis(): Long = toEpochDays() * MILLIS_PER_DAY
+
+private fun Long.toPickerLocalDate(): LocalDate =
+    LocalDate.fromEpochDays((this / MILLIS_PER_DAY).toInt())
 
 @Composable
 private fun SexChip(

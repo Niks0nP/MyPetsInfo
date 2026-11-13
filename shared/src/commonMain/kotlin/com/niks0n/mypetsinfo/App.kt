@@ -129,6 +129,7 @@ fun App(
                                         Res.string.weight_edit_title
                                     },
                                 )
+
                                 Screen.Editor -> stringResource(
                                     if (editedTask == null) Res.string.new_case else Res.string.change_case,
                                 )
@@ -355,7 +356,12 @@ private fun AppNavigationBar(
                     contentDescription = stringResource(Res.string.today),
                 )
             },
-            label = { Text(stringResource(Res.string.today)) },
+            label = {
+                NavigationLabel(
+                    stringResource(Res.string.today),
+                    selected == Screen.Today
+                )
+            },
         )
         NavigationBarItem(
             selected = selected == Screen.Schedule,
@@ -366,7 +372,12 @@ private fun AppNavigationBar(
                     contentDescription = stringResource(Res.string.schedule),
                 )
             },
-            label = { Text(stringResource(Res.string.schedule)) },
+            label = {
+                NavigationLabel(
+                    stringResource(Res.string.schedule),
+                    selected == Screen.Schedule
+                )
+            },
         )
         NavigationBarItem(
             selected = selected == Screen.News,
@@ -377,7 +388,12 @@ private fun AppNavigationBar(
                     contentDescription = stringResource(Res.string.news),
                 )
             },
-            label = { Text(stringResource(Res.string.news)) },
+            label = {
+                NavigationLabel(
+                    stringResource(Res.string.news),
+                    selected == Screen.News
+                )
+            },
         )
         NavigationBarItem(
             selected = selected == Screen.Pet,
@@ -388,7 +404,23 @@ private fun AppNavigationBar(
                     contentDescription = stringResource(Res.string.pet),
                 )
             },
-            label = { Text(stringResource(Res.string.pet)) },
+            label = {
+                NavigationLabel(
+                    stringResource(Res.string.pet),
+                    selected == Screen.Pet
+                )
+            },
         )
     }
+}
+
+@Composable
+private fun NavigationLabel(
+    text: String,
+    selected: Boolean,
+) {
+    Text(
+        text = text,
+        fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.SemiBold
+    )
 }

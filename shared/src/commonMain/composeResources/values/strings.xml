@@ -108,14 +108,15 @@
     <string name="pet_sex_male">Male</string>
     <string name="pet_sex_female">Female</string>
     <string name="pet_birth_date_label">Birth date</string>
-    <string name="pet_birth_date_hint">YYYY-MM-DD</string>
+    <string name="pet_birth_date_hint">DD-MM-YYYY</string>
+    <string name="pet_birth_date_select_action">Select date</string>
     <string name="pet_description_label">About your pet</string>
     <string name="pet_optional_hint">Optional</string>
     <string name="pet_save_action">Save</string>
     <string name="pet_cancel_action">Cancel</string>
     <string name="pet_saving">Saving…</string>
     <string name="pet_name_required">Enter your pet’s name</string>
-    <string name="pet_birth_date_invalid">Use a valid date in YYYY-MM-DD format</string>
+    <string name="pet_birth_date_invalid">Use a valid date in DD-MM-YYYY format</string>
     <string name="pet_birth_date_future">Birth date cannot be in the future</string>
     <string name="pet_discard_title">Discard changes?</string>
     <string name="pet_discard_body">Your unsaved profile changes will be lost.</string>
@@ -129,6 +130,9 @@
     <string name="weight_add_action">Add measurement</string>
     <string name="weight_edit_action">Edit measurement</string>
     <string name="weight_measurement_date">Measurement date</string>
+    <string name="weight_date_hint">YYYY-MM-DD</string>
+    <string name="weight_date_invalid">Use a valid date in YYYY-MM-DD format</string>
+    <string name="weight_date_future">Measurement date cannot be in the future</string>
     <string name="weight_value_label">Weight, kg</string>
     <string name="weight_value_hint">For example, 4.5</string>
     <string name="weight_note_label">Note</string>

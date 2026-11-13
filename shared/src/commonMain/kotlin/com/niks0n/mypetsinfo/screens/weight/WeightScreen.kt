@@ -152,8 +152,8 @@ internal fun WeightEditorScreen(
 
     val requiredError = stringResource(Res.string.weight_required_error)
     val invalidWeightError = stringResource(Res.string.weight_invalid_error)
-    val invalidDateError = stringResource(Res.string.pet_birth_date_invalid)
-    val futureDateError = stringResource(Res.string.pet_birth_date_future)
+    val invalidDateError = stringResource(Res.string.weight_date_invalid)
+    val futureDateError = stringResource(Res.string.weight_date_future)
     val hasChanges = measuredOn != initialDate || weight != initialWeight || note != initialNote
 
     fun requestCancel() {
@@ -199,7 +199,7 @@ internal fun WeightEditorScreen(
                     value = measuredOn,
                     onValueChange = { if (measurement == null && it.length <= 10) measuredOn = it },
                     label = { Text(stringResource(Res.string.weight_measurement_date)) },
-                    placeholder = { Text(stringResource(Res.string.pet_birth_date_hint)) },
+                    placeholder = { Text(stringResource(Res.string.weight_date_hint)) },
                     supportingText = {
                         Text(
                             stringResource(
